@@ -42,7 +42,7 @@ namespace MandelbrotGenerator
 	class MandelbrotImage
 	{
 		public static Byte[] Create(	Int32 pixelWidth,
-										Int32 pixelHight,
+										Int32 pixelHeight,
 										Complex center,
 										Double zoomFactor,
 										Int32 maxIterations,
@@ -53,27 +53,26 @@ namespace MandelbrotGenerator
 			var realMin   = center.Real - realWidth / 2;
 			var realStep  = realWidth / pixelWidth;
 
-			var imaginaryHight = pixelHight / zoomFactor * aspectRatio;
-			var imaginaryMin   = center.Imaginary - imaginaryHight / 2;
-			var imaginaryStep  = imaginaryHight / pixelHight;
+			var imaginaryHeight = pixelHeight / zoomFactor * aspectRatio;
+			var imaginaryMax   = center.Imaginary + imaginaryHeight / 2;
+			var imaginaryStep  = imaginaryHeight / pixelHeight;
 
-			var result = new Byte[pixelWidth * pixelHight];
+			var result = new Byte[pixelWidth * pixelHeight];
 
 			var mandelbrotSet = new MandelbrotSet(maxIterations, escapeRadius);
 
 			var index = 0;
-			var real = realMin;
-			for (var x = 0; x < pixelWidth; ++x) {
-				var imaginary = imaginaryMin;
-				for (var y = 0; y < pixelHight; ++y) {
+			var imaginary = imaginaryMax;
+			for (var y = 0; y < pixelHeight; ++y) {
+				var real = realMin;
+				for (var x = 0; x < pixelWidth; ++x) {
 					result[index++] = (Byte) (mandelbrotSet.GetEscapeIterations(new Complex(real, imaginary)) * Byte.MaxValue / maxIterations);
-					imaginary += imaginaryStep;
+					real += realStep;
 				}
-				real += realStep;
+				imaginary -= imaginaryStep;
 			}
 
 			return result;
 		}
-
 	}
 }
